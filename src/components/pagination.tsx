@@ -1,74 +1,52 @@
-import { FC, useState } from "react";
+import { FC } from "react";
+import Button from "./button";
 
 interface props {
-  totalPages: number;
-  isSearch: boolean;
+  currentPage: number;
   itemsPerPage?: number;
+  totalPages: number;
+  totalResults: number;
   setCurrentPage: (pageNumber: number) => void;
-  fetchMovieData: () => void;
-  searchMovieData: () => void;
+  handlePageChange: (pageNumber: number) => void;
 }
 
 const Pagination: FC<props> = ({
-  isSearch = false,
-  totalPages = 0,
+  currentPage,
   itemsPerPage = 20,
+  totalPages = 0,
+  totalResults = 0,
+  handlePageChange,
   setCurrentPage,
-  searchMovieData,
-  fetchMovieData,
 }) => {
-  const [activePage, setActivePage] = useState(1);
-
   const handleNextPage = () => {
-    const targetPage = activePage + 1;
-    setActivePage(targetPage);
+    const targetPage = currentPage + 1;
     setCurrentPage(targetPage);
-    if (!isSearch) {
-      fetchMovieData();
-    } else {
-      searchMovieData();
-    }
+    handlePageChange(targetPage);
   };
 
   const handlePreviousPage = () => {
-    const targetPage = activePage - 1;
-    setActivePage(targetPage);
+    const targetPage = currentPage - 1;
     setCurrentPage(targetPage);
-    if (!isSearch) {
-      fetchMovieData();
-    } else {
-      searchMovieData();
-    }
+    handlePageChange(targetPage);
   };
 
-  //   const handleJumpToPage = (pageNumber: number) => {
-  //     setCurrentPage(pageNumber);
-  //     setActivePage(pageNumber);
-  //   };
-
-  //   const startIndex = (activePage - 1) * itemsPerPage;
-  //   const endIndex = startIndex + itemsPerPage;
-  //   //   const currentItems = data.slice(startIndex, endIndex);
+  const handleJumpToPage = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
 
   return (
     <div>
-      <button onClick={handlePreviousPage} disabled={activePage === 1}>
+      <Button onClick={handlePreviousPage} disabled={currentPage === 1}>
         Previous
-      </button>
-      {/* {[...Array(totalPages).keys()].map(
-        (pageNumber) => (
-          <button
-            key={pageNumber}
-            onClick={() => handleJumpToPage(pageNumber + 1)}
-            disabled={currentPage === pageNumber + 1}
-          >
-            {pageNumber + 1}
-          </button>
-        )
-      )} */}
-      <button onClick={handleNextPage} disabled={activePage === totalPages}>
+      </Button>
+      <Button onClick={handleNextPage} disabled={currentPage === totalPages}>
         Next
-      </button>
+      </Button>
+      <Button key={totalPages} onClick={() => handleJumpToPage(totalPages)}>
+        {totalPages}
+      </Button>
+      {currentPage === 1 ? 1 : itemsPerPage * (currentPage - 1) + 1} -{" "}
+      {itemsPerPage * currentPage} of {totalResults}
     </div>
   );
 };

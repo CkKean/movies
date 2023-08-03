@@ -1,0 +1,18 @@
+.tab-bar {
+  background-color: #f0f0f0;
+  display: flex;
+  flex-wrap: wrap;
+  text-align: center;
+
+  .tab-item {
+    cursor: pointer;
+    flex: 1;
+    padding: 10px;
+  }
+}
+
+.tab-item.active {
+  background-color: #ff4d4f;
+  color: #fff;
+  font-weight: bold;
+}

@@ -7,7 +7,7 @@ const getNowPlaying = async <T>({
   pageNumber = 1,
 }: {
   pageNumber: number;
-}): Promise<Response<T>> => {
+}): Promise<T> => {
   return get(`${baseUrl}/now_playing?page=${pageNumber}`);
 };
 
@@ -15,17 +15,18 @@ const getTopRated = async <T>({
   pageNumber = 1,
 }: {
   pageNumber: number;
-}): Promise<Response<T>> => {
+}): Promise<T> => {
   return get(`${baseUrl}/top_rated?page=${pageNumber}`);
 };
 
-const getDetails = async <T>(movieID: string): Promise<Response<T>> => {
+const getDetails = async <T>(movieID: number): Promise<T> => {
   return get(`${baseUrl}/${movieID}`);
 };
 
 const MovieService = {
   getNowPlaying,
   getTopRated,
+  getDetails,
 };
 
 export default MovieService;
