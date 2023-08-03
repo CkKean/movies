@@ -1,0 +1,56 @@
+// Theme Color as variable
+
+.card {
+  display: flex;
+  flex-wrap: wrap;
+  border: 1px solid #ccc;
+  padding: 15px;
+  margin: 10px 0;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  .left-column,
+  .right-column {
+    flex: 1;
+    padding: 10px;
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+.tab-bar {
+  background-color: #f0f0f0;
+  padding: 10px;
+}
+
+.tab-list {
+  list-style: none;
+  display: flex;
+  justify-content: space-around;
+  padding: 0;
+  margin: 0;
+}
+
+.tab-item {
+  cursor: pointer;
+  padding: 8px 16px;
+}
+
+.tab-item.active {
+  background-color: #fff;
+}
+
+.image-container {
+  width: 150px; /* Set the width of the container */
+  height: 250px; /* Set the height of the container */
+  overflow: hidden; /* Ensure the image stays within the container */
+}
+
+img {
+  width: 100%; /* Make the image width stretch to fill the container */
+  height: 100%; /* Make the image height equal to the container height */
+  object-fit: cover; /* Maintain the image aspect ratio and cover the container */
+}
