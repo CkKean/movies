@@ -9,6 +9,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Dashboard />} />
+        <Route path="/movies" element={<Dashboard />} />
       </Routes>
     </Router>
   );

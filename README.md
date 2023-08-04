@@ -82,3 +82,5 @@ Here's a walkthrough of implemented user stories:
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
+
+**Note**: The provided TMDB Access Token is for evaluation purposes only and will be disabled after the evaluation period. To continue using the API, you need to apply for your own API key by following the instructions on The Movie Database API website.
