@@ -31,22 +31,48 @@ const Pagination: FC<props> = ({
   };
 
   const handleJumpToPage = (pageNumber: number) => {
-    setCurrentPage(pageNumber);
+    if (!isNaN(pageNumber) && pageNumber > 0) {
+      setCurrentPage(pageNumber);
+      handlePageChange(pageNumber);
+    }
   };
 
   return (
-    <div>
-      <Button onClick={handlePreviousPage} disabled={currentPage === 1}>
-        Previous
-      </Button>
-      <Button onClick={handleNextPage} disabled={currentPage === totalPages}>
-        Next
-      </Button>
-      <Button key={totalPages} onClick={() => handleJumpToPage(totalPages)}>
-        {totalPages}
-      </Button>
-      {currentPage === 1 ? 1 : itemsPerPage * (currentPage - 1) + 1} -{" "}
-      {itemsPerPage * currentPage} of {totalResults}
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "baseline",
+      }}
+    >
+      <div>
+        <span className="page-info">
+          Page <strong>{currentPage}</strong> of <strong>{totalPages}</strong>
+        </span>
+      </div>
+      <div>
+        <Button
+          style={{ marginRight: "5px" }}
+          onClick={handlePreviousPage}
+          disabled={currentPage === 1}
+        >
+          {"<"}
+        </Button>
+        <Button onClick={handleNextPage} disabled={currentPage === totalPages}>
+          {">"}
+        </Button>
+        {/* <div style={{ display: "inline" }}>
+          <span>Jump to Page:</span>
+          <input
+            type="number"
+            value={currentPage}
+            min={1}
+            max={totalPages}
+            onChange={(e) => handleJumpToPage(parseInt(e.target.value))}
+          />
+        </div> */}
+      </div>
     </div>
   );
 };

@@ -1,9 +1,9 @@
-import { FC } from "react";
+import { FC, ReactNode } from "react";
 
 interface props {
   items: {
     title?: string;
-    value?: string;
+    value?: string | number | ReactNode;
   }[];
 }
 
@@ -14,7 +14,7 @@ const Table: FC<props> = ({ items }) => {
         {items.length > 0 &&
           items.map((item) => (
             <tr>
-              <td>{item.title}</td>
+              <td style={{width:"17%", fontWeight: 700}}>{item.title}</td>
               <td>{item.value}</td>
             </tr>
           ))}

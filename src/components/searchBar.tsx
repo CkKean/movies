@@ -19,6 +19,7 @@ const SearchBar: FC<props> = ({
   return (
     <div>
       <input
+        placeholder="Search by title"
         style={{ display: "inline-block", width: "50%" }}
         onChange={(event) => setSearchTitle(event.target.value)}
         value={searchTitle}

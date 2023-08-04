@@ -1,17 +1,16 @@
-import { FC, useEffect, useMemo, useState } from "react";
-import { Movie } from "../../models/movie";
-import MovieService from "../../services/movie";
-import { Response } from "../../models/response";
-import { IMAGE_PATH_ORIGINAL } from "../../constants/imageConfiguration";
-import SearchService from "../../services/search";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
+import MovieDetailModal from "../../components/movieDetailModal";
 import Pagination from "../../components/pagination";
-import Modal from "../../components/modal";
+import SearchBar from "../../components/searchBar";
 import Spinner from "../../components/spinner";
 import Tabs from "../../components/tabs";
-import SearchBar from "../../components/searchBar";
+import { IMAGE_PATH_ORIGINAL } from "../../constants/imageConfiguration";
+import { Movie } from "../../models/movie";
 import { MovieDetail } from "../../models/movieDetail";
+import { Response } from "../../models/response";
+import MovieService from "../../services/movie";
+import SearchService from "../../services/search";
 import { useDeviceType } from "../../utils/useDeviceType";
-import Table from "../../components/table";
 
 const CATEGORY = {
   NOW_SHOWING: "NOW_SHOWING",
@@ -34,67 +33,70 @@ const Dashbaord: FC = () => {
   const [showDetail, setShowDetail] = useState<boolean>(false);
   const [movieDetail, setMovieDetail] = useState<MovieDetail | null>(null);
 
-  const fetchMovieData = async ({
-    selectedCategory = category,
-    pageNumber = currentPage,
-  }: {
-    selectedCategory?: string;
-    pageNumber?: number;
-  }) => {
-    setLoading(true);
-    setIsSearch(false);
-    setCategory(selectedCategory);
-    try {
-      let data: Response<Movie[]> | null = null;
-      if (selectedCategory === CATEGORY.NOW_SHOWING) {
-        data = await MovieService.getNowPlaying({ pageNumber: pageNumber });
-      } else {
-        data = await MovieService.getTopRated({ pageNumber: pageNumber });
-      }
-
-      if (data && data.results && data.results.length > 0) {
-        setMovies(data.results);
-        setTotalPages(data.total_pages);
-        setTotalResults(data.total_results);
-      } else {
-        throw new Error("Request failed.");
-      }
-
-      console.log(data);
-    } catch (error) {
-      console.log(error);
-    }
-    setLoading(false);
-  };
-
-  const searchMovieData = async (pageNumber = 1) => {
-    setLoading(true);
-    setIsSearch(true);
-
-    try {
-      if (searchTitle !== null && searchTitle !== "") {
-        let data: Response<Movie[]> = await SearchService.searchMovie(
-          searchTitle,
-          pageNumber
-        );
+  const fetchMovieData = useCallback(
+    async ({
+      selectedCategory = CATEGORY.NOW_SHOWING,
+      pageNumber = 1,
+    }: {
+      selectedCategory?: string;
+      pageNumber?: number;
+    }) => {
+      setLoading(true);
+      setIsSearch(false);
+      setCategory(selectedCategory);
+      try {
+        let data: Response<Movie[]> | null = null;
+        if (selectedCategory === CATEGORY.NOW_SHOWING) {
+          data = await MovieService.getNowPlaying({ pageNumber: pageNumber });
+        } else {
+          data = await MovieService.getTopRated({ pageNumber: pageNumber });
+        }
 
         if (data && data.results && data.results.length > 0) {
-
-        
-
           setMovies(data.results);
+          setTotalPages(data.total_pages);
+          setTotalResults(data.total_results);
         } else {
           throw new Error("Request failed.");
         }
+
         console.log(data);
-      } else {
-        alert("Please enter the title for searching.");
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
-    }
-    setLoading(false);
-  };
+      setLoading(false);
+    },
+    []
+  );
+
+  const searchMovieData = useCallback(
+    async (pageNumber = 1) => {
+      setLoading(true);
+      setIsSearch(true);
+
+      try {
+        if (searchTitle !== null && searchTitle !== "") {
+          let data: Response<Movie[]> = await SearchService.searchMovie(
+            searchTitle,
+            pageNumber
+          );
+
+          if (data && data.results && data.results.length > 0) {
+            setMovies(data.results);
+          } else {
+            throw new Error("Request failed.");
+          }
+          console.log(data);
+        } else {
+          alert("Please enter the title for searching.");
+        }
+      } catch (error) {
+        console.log(error);
+      }
+      setLoading(false);
+    },
+    [searchTitle]
+  );
 
   const handlePageChange = (pageNumber: number) => {
     if (isSearch) {
@@ -104,14 +106,14 @@ const Dashbaord: FC = () => {
     }
   };
 
-  const handleReset = () => {
+  const handleReset = useCallback(() => {
     setCurrentPage(1);
     setSearchTitle("");
     fetchMovieData({
       selectedCategory: CATEGORY.NOW_SHOWING,
       pageNumber: 1,
     });
-  };
+  }, [fetchMovieData]);
 
   const handleOnSelectMovie = async (movieID: number) => {
     setDetailLoading(true);
@@ -189,15 +191,12 @@ const Dashbaord: FC = () => {
         <Spinner />
       ) : (
         <>
-          <Modal
-            title={movieDetail?.title}
+          <MovieDetailModal
+            loading={detailLoading}
+            movieDetail={movieDetail}
             show={showDetail}
             onClose={() => setShowDetail(false)}
-          >
-            <Table
-              items={[{ title: "Overview", value: movieDetail?.overview }]}
-            />
-          </Modal>
+          />
 
           <div style={{ padding: "10px", margin: "10px 10%" }}>
             <Pagination
@@ -212,11 +211,16 @@ const Dashbaord: FC = () => {
               movies.length > 0 &&
               movies.map((movie) => (
                 <div
+                  key={movie.id}
                   className="card"
                   onClick={() => {
                     handleOnSelectMovie(movie.id);
                   }}
                 >
+                  <div className="hover-text">
+                    {isMobile ? "Tap" : "Click"} me for more details
+                  </div>
+
                   <div className="left-column">
                     <div
                       className="image-container"
@@ -230,15 +234,20 @@ const Dashbaord: FC = () => {
                     </div>
                   </div>
                   <div className="right-column">
-                    <div style={{ fontSize: "20px", fontWeight: "bold" }}>
+                    <div style={{ fontSize: "30px", fontWeight: "bold" }}>
                       {movie.title}
                     </div>
-                    <p>{movie.overview}</p>
-                    <div>
-                      <p>Popularity: {movie.popularity}</p>
-                      <p>Vote Average: {movie.vote_average}</p>
-                      <p>Vote Countt: {movie.vote_count}</p>
-                      <p>Language: {movie.original_language}</p>
+                    <div
+                      style={{
+                        padding: "1rem 0",
+                        fontSize: "16px",
+                        fontWeight: "400",
+                      }}
+                    >
+                      {movie.overview}
+                    </div>
+                    <div style={{ fontSize: "16px", fontWeight: "600" }}>
+                      <p>Language: {movie.original_language.toUpperCase()}</p>
                       <p>Release Date: {movie.release_date}</p>
                     </div>
                   </div>
