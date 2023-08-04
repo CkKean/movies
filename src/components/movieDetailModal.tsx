@@ -84,7 +84,10 @@ const MovieDetailModal: FC<props> = ({
                     },
                     {
                       title: "Movie Type",
-                      value: movieDetail?.genres[0].name,
+                      value:
+                        movieDetail?.genres.length > 0
+                          ? movieDetail?.genres[0].name
+                          : "-",
                     },
                     {
                       title: "Original Language",
@@ -92,7 +95,10 @@ const MovieDetailModal: FC<props> = ({
                     },
                     {
                       title: "Spoken Language",
-                      value: movieDetail?.spoken_languages[0].english_name,
+                      value:
+                        movieDetail?.spoken_languages.length > 0
+                          ? movieDetail?.spoken_languages[0]?.english_name
+                          : "-",
                     },
                     { title: "Status", value: movieDetail?.status },
                     { title: "Release Date", value: movieDetail?.release_date },
