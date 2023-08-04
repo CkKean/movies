@@ -1,6 +1,5 @@
 import { lazy } from "react";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
-import "./App.css";
 import "./styles.scss";
 
 const Dashboard = lazy(() => import("./pages/dashboard"));

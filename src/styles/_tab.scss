@@ -1,18 +1,27 @@
 .tab-bar {
   background-color: #f0f0f0;
   display: flex;
-  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  max-width: 250px;
+  margin: 0 auto;
+  overflow: hidden;
   text-align: center;
+  border-radius: 30px;
 
   .tab-item {
     cursor: pointer;
-    flex: 1;
+    font-weight: bold;
     padding: 10px;
+    flex: 1;
+    max-width: 100px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 
 .tab-item.active {
-  background-color: #ff4d4f;
+  background-color: $primary-color;
   color: #fff;
-  font-weight: bold;
 }

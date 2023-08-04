@@ -17,7 +17,7 @@ const SearchBar: FC<props> = ({
   disabled = false,
 }) => {
   return (
-    <div>
+    <div style={{margin:"1rem 0"}}>
       <input
         placeholder="Search by title"
         style={{ display: "inline-block", width: "50%" }}

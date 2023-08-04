@@ -5,7 +5,7 @@ interface props {
   style?: any;
   disabled?: boolean;
   children: React.ReactNode | string;
-  onClick: () => any;
+  onClick?: () => any;
 }
 
 const Button: FC<props> = ({

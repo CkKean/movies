@@ -1,0 +1,27 @@
+// ToTopButton.scss
+.to-top-button {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  font-size: 20px;
+  cursor: pointer;
+  opacity: 0.8;
+  text-align: center;
+  transition: opacity 0.3s ease;
+  padding: unset !important;
+
+  &.show {
+    display: block;
+  }
+
+  &:hover {
+    opacity: 1;
+  }
+}

@@ -13,6 +13,7 @@ const Tabs: FC<props> = ({ items }) => {
     <div className="tab-bar">
       {items.map((item) => (
         <div
+          key={item.title}
           className={`tab-item ${item.active ? "active" : ""}`}
           onClick={item.onClick}
         >

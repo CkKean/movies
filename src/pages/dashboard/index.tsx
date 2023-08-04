@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useMemo, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import MovieDetailModal from "../../components/movieDetailModal";
 import Pagination from "../../components/pagination";
 import SearchBar from "../../components/searchBar";
@@ -11,6 +11,10 @@ import { Response } from "../../models/response";
 import MovieService from "../../services/movie";
 import SearchService from "../../services/search";
 import { useDeviceType } from "../../utils/useDeviceType";
+import { isNullOrUndefined } from "../../utils/validationHelper";
+import Message from "../../components/message";
+import Button from "../../components/button";
+import ToTopButton from "../../components/toTopButton";
 
 const CATEGORY = {
   NOW_SHOWING: "NOW_SHOWING",
@@ -18,6 +22,7 @@ const CATEGORY = {
 };
 
 const Dashbaord: FC = () => {
+  let movieTitleSearch = useRef<string>("");
   const { isMobile } = useDeviceType();
   const [movies, setMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -32,6 +37,8 @@ const Dashbaord: FC = () => {
   const [detailLoading, setDetailLoading] = useState<boolean>(false);
   const [showDetail, setShowDetail] = useState<boolean>(false);
   const [movieDetail, setMovieDetail] = useState<MovieDetail | null>(null);
+  const [showError, setShowError] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
 
   const fetchMovieData = useCallback(
     async ({
@@ -44,6 +51,7 @@ const Dashbaord: FC = () => {
       setLoading(true);
       setIsSearch(false);
       setCategory(selectedCategory);
+      setCurrentPage(pageNumber);
       try {
         let data: Response<Movie[]> | null = null;
         if (selectedCategory === CATEGORY.NOW_SHOWING) {
@@ -52,16 +60,17 @@ const Dashbaord: FC = () => {
           data = await MovieService.getTopRated({ pageNumber: pageNumber });
         }
 
-        if (data && data.results && data.results.length > 0) {
+        if (data && data.results) {
           setMovies(data.results);
           setTotalPages(data.total_pages);
           setTotalResults(data.total_results);
-        } else {
-          throw new Error("Request failed.");
         }
-
-        console.log(data);
       } catch (error) {
+        setError("Network issue. Please reload the page and try again.");
+        setMovies([]);
+        setTotalPages(0);
+        setTotalResults(0);
+        setShowError(true);
         console.log(error);
       }
       setLoading(false);
@@ -70,45 +79,58 @@ const Dashbaord: FC = () => {
   );
 
   const searchMovieData = useCallback(
-    async (pageNumber = 1) => {
-      setLoading(true);
-      setIsSearch(true);
-
+    async (pageNumber = 1, isPageChanged = false) => {
       try {
-        if (searchTitle !== null && searchTitle !== "") {
-          let data: Response<Movie[]> = await SearchService.searchMovie(
-            searchTitle,
+        setLoading(true);
+        setIsSearch(true);
+        setCurrentPage(pageNumber);
+
+        if (!isNullOrUndefined(searchTitle)) {
+          movieTitleSearch.current = searchTitle;
+        }
+
+        // Search ""
+        if (isNullOrUndefined(searchTitle) && !isPageChanged) {
+          fetchMovieData({});
+        } else {
+          const data: Response<Movie[]> = await SearchService.searchMovie(
+            movieTitleSearch.current,
             pageNumber
           );
 
-          if (data && data.results && data.results.length > 0) {
+          if (data && data.results) {
             setMovies(data.results);
-          } else {
-            throw new Error("Request failed.");
+            setTotalPages(data.total_pages);
+            setTotalResults(data.total_results);
           }
-          console.log(data);
-        } else {
-          alert("Please enter the title for searching.");
         }
       } catch (error) {
+        setError("Network issue. Please reload the page and try again.");
+        setShowError(true);
+        setMovies([]);
+        setTotalPages(0);
+        setTotalResults(0);
         console.log(error);
       }
       setLoading(false);
     },
-    [searchTitle]
+    [fetchMovieData, searchTitle]
   );
 
-  const handlePageChange = (pageNumber: number) => {
-    if (isSearch) {
-      searchMovieData(pageNumber);
-    } else {
-      fetchMovieData({ pageNumber });
-    }
-  };
+  const handlePageChange = useCallback(
+    (pageNumber: number) => {
+      if (isSearch) {
+        searchMovieData(pageNumber, currentPage !== pageNumber);
+      } else {
+        fetchMovieData({ pageNumber });
+      }
+    },
+    [currentPage, fetchMovieData, isSearch, searchMovieData]
+  );
 
   const handleReset = useCallback(() => {
-    setCurrentPage(1);
     setSearchTitle("");
+    movieTitleSearch.current = "";
     fetchMovieData({
       selectedCategory: CATEGORY.NOW_SHOWING,
       pageNumber: 1,
@@ -124,11 +146,12 @@ const Dashbaord: FC = () => {
         setMovieDetail(data);
         setShowDetail(true);
       } else {
-        throw new Error("Retrieve movie detail failed. Please try again.");
+        setShowError(true);
+        setError("Retrieve movie detail failed. Please try again.");
       }
     } catch (error) {
-      alert(error);
-      setShowDetail(false);
+      setShowError(true);
+      setError("Network issue. Please reload the page and try again.");
     }
     setDetailLoading(false);
   };
@@ -178,12 +201,30 @@ const Dashbaord: FC = () => {
     [handleReset, loading, searchMovieData, searchTitle]
   );
 
+  const pagination = useMemo(
+    () => (
+      <Pagination
+        itemsPerPage={itemsPerPage}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        totalResults={totalResults}
+        setCurrentPage={setCurrentPage}
+        handlePageChange={handlePageChange}
+      />
+    ),
+    [currentPage, handlePageChange, itemsPerPage, totalPages, totalResults]
+  );
+
   useEffect(() => {
     fetchMovieData({});
   }, []);
 
   return (
     <div>
+      <div className="header">
+        <h1 className="title">Jom Movie!</h1>
+      </div>
+
       {tabsComponent}
       {searchBar}
 
@@ -191,71 +232,91 @@ const Dashbaord: FC = () => {
         <Spinner />
       ) : (
         <>
-          <MovieDetailModal
-            loading={detailLoading}
-            movieDetail={movieDetail}
-            show={showDetail}
-            onClose={() => setShowDetail(false)}
-          />
-
           <div style={{ padding: "10px", margin: "10px 10%" }}>
-            <Pagination
-              itemsPerPage={itemsPerPage}
-              currentPage={currentPage}
-              totalPages={totalPages}
-              totalResults={totalResults}
-              setCurrentPage={setCurrentPage}
-              handlePageChange={handlePageChange}
-            />
-            {movies &&
-              movies.length > 0 &&
-              movies.map((movie) => (
-                <div
-                  key={movie.id}
-                  className="card"
-                  onClick={() => {
-                    handleOnSelectMovie(movie.id);
-                  }}
-                >
-                  <div className="hover-text">
-                    {isMobile ? "Tap" : "Click"} me for more details
-                  </div>
+            {movies && movies.length > 0 ? (
+              <>
+                {pagination}
+                {movies.map((movie) => (
+                  <div
+                    key={movie.id}
+                    className="card"
+                    onClick={() => {
+                      handleOnSelectMovie(movie.id);
+                    }}
+                  >
+                    <div className="hover-text">
+                      <Button type={"default"}>Movie Info</Button>
+                    </div>
 
-                  <div className="left-column">
-                    <div
-                      className="image-container"
-                      style={{ width: isMobile ? "100%" : "150px" }}
-                    >
-                      <img
-                        src={`${IMAGE_PATH_ORIGINAL}${movie.poster_path}`}
-                        alt={movie.title}
-                        loading="lazy"
-                      />
+                    <div className="left-column">
+                      <div
+                        className="image-container"
+                        style={{ width: isMobile ? "100%" : "150px" }}
+                      >
+                        <img
+                          src={`${IMAGE_PATH_ORIGINAL}${movie.poster_path}`}
+                          alt={movie.title}
+                          loading="lazy"
+                        />
+                      </div>
+                    </div>
+                    <div className="right-column">
+                      <div
+                        style={{
+                          fontSize: "30px",
+                          fontWeight: "600",
+                          textShadow: "2px 2px 4px rgba(0, 0, 0, 0.3)",
+                          letterSpacing: "2px",
+                          transition: "transform 0.3s ease",
+                        }}
+                      >
+                        {movie.title}
+                      </div>
+                      <div
+                        style={{
+                          padding: "1rem 0",
+                          fontSize: "16px",
+                          fontWeight: "400",
+                        }}
+                      >
+                        Description: {movie.overview}
+                      </div>
+                      <div style={{ fontSize: "16px", fontWeight: "600" }}>
+                        <p>Language: {movie.original_language}</p>
+                        <p>Release Date: {movie.release_date}</p>
+                      </div>
                     </div>
                   </div>
-                  <div className="right-column">
-                    <div style={{ fontSize: "30px", fontWeight: "bold" }}>
-                      {movie.title}
-                    </div>
-                    <div
-                      style={{
-                        padding: "1rem 0",
-                        fontSize: "16px",
-                        fontWeight: "400",
-                      }}
-                    >
-                      {movie.overview}
-                    </div>
-                    <div style={{ fontSize: "16px", fontWeight: "600" }}>
-                      <p>Language: {movie.original_language.toUpperCase()}</p>
-                      <p>Release Date: {movie.release_date}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
+                ))}
+                {pagination}
+              </>
+            ) : (
+              <div className="no-data-shown">
+                No Data Shown
+                {movieTitleSearch.current !== "" &&
+                  ` with "${movieTitleSearch.current}"`}
+              </div>
+            )}
           </div>
         </>
       )}
+      <MovieDetailModal
+        loading={detailLoading}
+        movieDetail={movieDetail}
+        show={showDetail}
+        onClose={() => setShowDetail(false)}
+      />
+
+      <Message
+        type="error"
+        title={error}
+        onClose={() => {
+          setShowError(false);
+          setError("");
+        }}
+        show={showError}
+      />
+      <ToTopButton />
     </div>
   );
 };

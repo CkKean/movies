@@ -1,4 +1,3 @@
-import { Response } from "../models/response";
 import { get } from "../utils/customRequest";
 
 const baseUrl = "https://api.themoviedb.org/3/movie";
@@ -8,7 +7,7 @@ const getNowPlaying = async <T>({
 }: {
   pageNumber: number;
 }): Promise<T> => {
-  return get(`${baseUrl}/now_playing?page=${pageNumber}`);
+  return get(`${baseUrl}/now_playing?page=${pageNumber}&sort_by=release_date.desc`);
 };
 
 const getTopRated = async <T>({

@@ -10,7 +10,6 @@ interface props {
   movieDetail?: MovieDetail | null;
   show: boolean;
   onClose: () => void;
-  children?: any;
 }
 
 const MovieDetailModal: FC<props> = ({
@@ -18,7 +17,6 @@ const MovieDetailModal: FC<props> = ({
   movieDetail,
   show,
   onClose,
-  children,
 }) => {
   if (!show) {
     return null;
@@ -35,7 +33,7 @@ const MovieDetailModal: FC<props> = ({
   };
 
   return (
-    <div className="modal-backdrop">
+    <div className="modal modal-backdrop">
       <div className="modal-container modal-default">
         {loading ? (
           <Spinner />
@@ -64,6 +62,7 @@ const MovieDetailModal: FC<props> = ({
               <Table
                 items={[
                   { title: "Overview", value: movieDetail?.overview },
+                  { title: "Tagline", value: movieDetail?.tagline || "-" },
                   {
                     title: "Duration",
                     value: convertMinToReadableTime(movieDetail?.runtime),
@@ -73,27 +72,50 @@ const MovieDetailModal: FC<props> = ({
                     value: movieDetail?.genres[0].name,
                   },
                   {
-                    title: "Language",
-                    value: movieDetail?.original_language.toUpperCase(),
+                    title: "Original Language",
+                    value: movieDetail?.original_language,
                   },
-                  { title: "Adult", value: movieDetail?.adult ? "Yes" : "No" },
-                  { title: "Popularity", value: movieDetail?.popularity },
+                  {
+                    title: "Spoken Language",
+                    value: movieDetail?.spoken_languages[0].english_name,
+                  },
+                  { title: "Status", value: movieDetail?.status },
                   { title: "Release Date", value: movieDetail?.release_date },
-                  { title: "Tagline", value: movieDetail?.tagline },
+                  {
+                    title: "Above 18",
+                    value: movieDetail?.adult ? (
+                      <span className="success-color">✔</span>
+                    ) : (
+                      <span className="danger-color">✗</span>
+                    ),
+                  },
+                  { title: "Popularity", value: movieDetail?.popularity },
                   { title: "Vote Average", value: movieDetail?.vote_average },
                   { title: "Vote Count", value: movieDetail?.vote_count },
+                  {
+                    title: "Website ",
+                    value: movieDetail?.homepage ? (
+                      <a
+                        href={movieDetail?.homepage}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        {movieDetail?.homepage}
+                      </a>
+                    ) : (
+                      "-"
+                    ),
+                  },
                 ]}
               />
               <div
                 style={{
                   display: "block",
                   margin: "1rem 0",
-                  textAlign: "right",
+                  textAlign: "center",
                 }}
               >
-                <Button type="default" onClick={onClose}>
-                  Close
-                </Button>
+                <Button onClick={onClose}>Close</Button>
               </div>
             </div>
           </>

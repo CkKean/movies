@@ -1,4 +1,5 @@
 import { FC, ReactNode } from "react";
+import { isNullOrUndefined } from "../utils/validationHelper";
 
 interface props {
   items: {
@@ -14,8 +15,8 @@ const Table: FC<props> = ({ items }) => {
         {items.length > 0 &&
           items.map((item) => (
             <tr>
-              <td style={{width:"17%", fontWeight: 700}}>{item.title}</td>
-              <td>{item.value}</td>
+              <td style={{ width: "17%", fontWeight: 700 }}>{item.title}</td>
+              <td>{!isNullOrUndefined(item.value) ? item.value : "-"}</td>
             </tr>
           ))}
       </tbody>

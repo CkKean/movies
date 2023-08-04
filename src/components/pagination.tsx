@@ -30,48 +30,54 @@ const Pagination: FC<props> = ({
     handlePageChange(targetPage);
   };
 
-  const handleJumpToPage = (pageNumber: number) => {
-    if (!isNaN(pageNumber) && pageNumber > 0) {
-      setCurrentPage(pageNumber);
-      handlePageChange(pageNumber);
-    }
-  };
-
   return (
     <div
       style={{
         display: "flex",
         flexDirection: "row",
         justifyContent: "space-between",
-        alignItems: "baseline",
+        alignItems: "center",
       }}
     >
-      <div>
-        <span className="page-info">
+      {/* <div>
+        <b>Sort By:</b>{" "}
+        <select>
+          <option>
+            Release Date Ascending<div className="arrow-up"></div>
+            <div className="arrow-down"></div>
+          </option>
+          <option>Release Date Descending</option>
+          <option>Popularity Ascending</option>
+          <option>Popularity Descending</option>
+          <option>Vote Count Ascending</option>
+          <option>Vote Count Descending</option>
+        </select>
+      </div> */}
+
+      <div style={{ fontWeight: 400 }}>
+        {currentPage === 1 ? 1 : itemsPerPage * (currentPage - 1) + 1} -{" "}
+        {itemsPerPage * currentPage} of {totalResults} items
+      </div>
+
+      <div style={{ textAlign: "right" }}>
+        <span className="page-info" style={{ marginRight: "5px" }}>
           Page <strong>{currentPage}</strong> of <strong>{totalPages}</strong>
         </span>
-      </div>
-      <div>
-        <Button
-          style={{ marginRight: "5px" }}
-          onClick={handlePreviousPage}
-          disabled={currentPage === 1}
-        >
-          {"<"}
-        </Button>
-        <Button onClick={handleNextPage} disabled={currentPage === totalPages}>
-          {">"}
-        </Button>
-        {/* <div style={{ display: "inline" }}>
-          <span>Jump to Page:</span>
-          <input
-            type="number"
-            value={currentPage}
-            min={1}
-            max={totalPages}
-            onChange={(e) => handleJumpToPage(parseInt(e.target.value))}
-          />
-        </div> */}
+        <div className="button-group">
+          <Button
+            style={{ marginRight: "5px" }}
+            onClick={handlePreviousPage}
+            disabled={currentPage === 1}
+          >
+            {"<"}
+          </Button>
+          <Button
+            onClick={handleNextPage}
+            disabled={currentPage === totalPages}
+          >
+            {">"}
+          </Button>
+        </div>
       </div>
     </div>
   );

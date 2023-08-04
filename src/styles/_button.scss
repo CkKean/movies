@@ -19,7 +19,7 @@ button {
 }
 
 .btn-primary {
-  background-color: #1677ff;
+  background-color: $primary-color;
   box-shadow: 0 2px 0 rgba(5, 145, 255, 0.1);
 }
 
@@ -29,7 +29,7 @@ button {
 }
 
 .btn-default {
-  background-color: #abababc8;
+  background-color: $default-color;
   box-shadow: 0 2px 0 rgba(5, 145, 255, 0.1);
 }
 

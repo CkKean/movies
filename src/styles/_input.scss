@@ -1,7 +1,7 @@
 input {
   box-sizing: border-box;
   margin: 0;
-  padding: 4px 11px;
+  padding: 7px 11px;
   color: rgba(0, 0, 0, 0.88);
   font-size: 14px;
   list-style: none;
@@ -15,12 +15,12 @@ input {
 }
 
 input:hover {
-  border-color: #4096ff;
+  border-color: $primary-color;
   border-inline-end-width: 1px;
 }
 
 input:focus {
-  border: #4096ff;
+  border: $primary-color;
   box-shadow: 0 0 0 2px rgba(5, 145, 255, 0.1);
   border-inline-end-width: 1px;
   outline: 0;
