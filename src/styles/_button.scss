@@ -1,5 +1,5 @@
 button {
-  color: #fff;
+  color: $white-color;
   outline: none;
   position: relative;
   display: inline;
@@ -12,7 +12,6 @@ button {
   transition: all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
   user-select: none;
   touch-action: manipulation;
-  font-size: 14px;
   height: 32px;
   padding: 4px 15px;
   border-radius: 6px;
@@ -24,8 +23,8 @@ button {
 }
 
 .btn-primary:hover {
-  color: #fff;
-  background-color: #4096ff;
+  color: $white-color;
+  background-color: $primary-hover-color;
 }
 
 .btn-default {
@@ -34,15 +33,15 @@ button {
 }
 
 .btn-default:hover {
-  color: #fff;
-  background-color: #d9d9d9;
+  color: $white-color;
+  background-color: $default-hover-color;
 }
 
 button:disabled,
 .btn-default:disabled,
 .btn-primary:disabled {
   cursor: not-allowed;
-  border-color: #d9d9d9;
+  border-color: $border-color;
   color: rgba(0, 0, 0, 0.25);
   background-color: rgba(0, 0, 0, 0.04);
   box-shadow: none;

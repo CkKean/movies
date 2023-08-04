@@ -17,21 +17,22 @@ const SearchBar: FC<props> = ({
   disabled = false,
 }) => {
   return (
-    <div style={{margin:"1rem 0"}}>
+    <div style={{ margin: "1rem 0" }}>
       <input
-        placeholder="Search by title"
+        placeholder="Search by Movie Title"
         style={{ display: "inline-block", width: "50%" }}
         onChange={(event) => setSearchTitle(event.target.value)}
         value={searchTitle}
       />
       <Button
+        disabled={disabled}
         style={{ margin: "0px 5px" }}
         type="primary"
         onClick={() => onSearch()}
       >
         Search
       </Button>
-      <Button type="default" onClick={onReset}>
+      <Button disabled={disabled} type="default" onClick={onReset}>
         Reset
       </Button>
     </div>

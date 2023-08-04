@@ -1,7 +1,7 @@
 .card {
   display: flex;
   flex-wrap: wrap;
-  border: 1px solid #ccc;
+  border: 1px solid $border-color;
   margin: 10px 0;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: background-color 0.3s ease; /* Add a smooth transition effect */
@@ -46,7 +46,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: #fff;
+  color: $white-color;
   padding: 10px;
   font-size: 20px;
   font-weight: 600;
@@ -54,4 +54,23 @@
 
 .card:hover .hover-text {
   display: block;
+}
+
+.card-title {
+  font-size: 30px;
+  font-weight: 600;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  letter-spacing: 2px;
+  transition: transform 0.3s ease;
+}
+
+.card-description {
+  padding: 1rem 0;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.card-extra-information {
+  font-size: 16px;
+  font-weight: 600;
 }

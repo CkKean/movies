@@ -31,53 +31,29 @@ const Pagination: FC<props> = ({
   };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-      }}
-    >
-      {/* <div>
-        <b>Sort By:</b>{" "}
-        <select>
-          <option>
-            Release Date Ascending<div className="arrow-up"></div>
-            <div className="arrow-down"></div>
-          </option>
-          <option>Release Date Descending</option>
-          <option>Popularity Ascending</option>
-          <option>Popularity Descending</option>
-          <option>Vote Count Ascending</option>
-          <option>Vote Count Descending</option>
-        </select>
-      </div> */}
-
-      <div style={{ fontWeight: 400 }}>
-        {currentPage === 1 ? 1 : itemsPerPage * (currentPage - 1) + 1} -{" "}
-        {itemsPerPage * currentPage} of {totalResults} items
+    <div className="pagination">
+      <div className="fw400">
+        <strong>
+          {currentPage === 1 ? 1 : itemsPerPage * (currentPage - 1) + 1} -{" "}
+          {itemsPerPage * currentPage}
+        </strong>{" "}
+        of <strong>{totalResults}</strong> items
       </div>
 
-      <div style={{ textAlign: "right" }}>
-        <span className="page-info" style={{ marginRight: "5px" }}>
+      <div className="text-right">
+        <span className="fw400" style={{ marginRight: "5px" }}>
           Page <strong>{currentPage}</strong> of <strong>{totalPages}</strong>
         </span>
-        <div className="button-group">
-          <Button
-            style={{ marginRight: "5px" }}
-            onClick={handlePreviousPage}
-            disabled={currentPage === 1}
-          >
-            {"<"}
-          </Button>
-          <Button
-            onClick={handleNextPage}
-            disabled={currentPage === totalPages}
-          >
-            {">"}
-          </Button>
-        </div>
+        <Button
+          style={{ marginRight: "5px" }}
+          onClick={handlePreviousPage}
+          disabled={currentPage === 1}
+        >
+          {"<"}
+        </Button>
+        <Button onClick={handleNextPage} disabled={currentPage === totalPages}>
+          {">"}
+        </Button>
       </div>
     </div>
   );

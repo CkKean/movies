@@ -2,12 +2,12 @@
 .to-top-button {
   display: none;
   position: fixed;
-  bottom: 20px;
-  right: 20px;
+  bottom: 25px;
+  right: 35px;
   width: 40px;
   height: 40px;
-  background-color: #007bff;
-  color: #fff;
+  background-color: $primary-color;
+  color: $white-color;
   border: none;
   border-radius: 50%;
   font-size: 20px;

@@ -1,9 +1,12 @@
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import Button from "../../components/button";
+import Message from "../../components/message";
 import MovieDetailModal from "../../components/movieDetailModal";
 import Pagination from "../../components/pagination";
 import SearchBar from "../../components/searchBar";
-import Spinner from "../../components/spinner";
+import Skeleton from "../../components/skeleton";
 import Tabs from "../../components/tabs";
+import ToTopButton from "../../components/toTopButton";
 import { IMAGE_PATH_ORIGINAL } from "../../constants/imageConfiguration";
 import { Movie } from "../../models/movie";
 import { MovieDetail } from "../../models/movieDetail";
@@ -12,26 +15,19 @@ import MovieService from "../../services/movie";
 import SearchService from "../../services/search";
 import { useDeviceType } from "../../utils/useDeviceType";
 import { isNullOrUndefined } from "../../utils/validationHelper";
-import Message from "../../components/message";
-import Button from "../../components/button";
-import ToTopButton from "../../components/toTopButton";
-
-const CATEGORY = {
-  NOW_SHOWING: "NOW_SHOWING",
-  TOP_RATED: "TOP_RATED",
-};
+import { MOVIE_STATUS } from "../../constants/movieStatusCategory";
 
 const Dashbaord: FC = () => {
+  const itemsPerPage = 20;
   let movieTitleSearch = useRef<string>("");
   const { isMobile } = useDeviceType();
   const [movies, setMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [searchTitle, setSearchTitle] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [itemsPerPage, setItemsPerPage] = useState<number>(20);
   const [totalPages, setTotalPages] = useState<number>(0);
   const [totalResults, setTotalResults] = useState<number>(0);
-  const [category, setCategory] = useState<string>(CATEGORY.NOW_SHOWING);
+  const [category, setCategory] = useState<string>(MOVIE_STATUS.NOW_SHOWING);
   const [isSearch, setIsSearch] = useState<boolean>(false);
 
   const [detailLoading, setDetailLoading] = useState<boolean>(false);
@@ -42,7 +38,7 @@ const Dashbaord: FC = () => {
 
   const fetchMovieData = useCallback(
     async ({
-      selectedCategory = CATEGORY.NOW_SHOWING,
+      selectedCategory = category,
       pageNumber = 1,
     }: {
       selectedCategory?: string;
@@ -54,7 +50,7 @@ const Dashbaord: FC = () => {
       setCurrentPage(pageNumber);
       try {
         let data: Response<Movie[]> | null = null;
-        if (selectedCategory === CATEGORY.NOW_SHOWING) {
+        if (selectedCategory === MOVIE_STATUS.NOW_SHOWING) {
           data = await MovieService.getNowPlaying({ pageNumber: pageNumber });
         } else {
           data = await MovieService.getTopRated({ pageNumber: pageNumber });
@@ -75,7 +71,7 @@ const Dashbaord: FC = () => {
       }
       setLoading(false);
     },
-    []
+    [category]
   );
 
   const searchMovieData = useCallback(
@@ -89,7 +85,6 @@ const Dashbaord: FC = () => {
           movieTitleSearch.current = searchTitle;
         }
 
-        // Search ""
         if (isNullOrUndefined(searchTitle) && !isPageChanged) {
           fetchMovieData({});
         } else {
@@ -132,7 +127,7 @@ const Dashbaord: FC = () => {
     setSearchTitle("");
     movieTitleSearch.current = "";
     fetchMovieData({
-      selectedCategory: CATEGORY.NOW_SHOWING,
+      selectedCategory: MOVIE_STATUS.NOW_SHOWING,
       pageNumber: 1,
     });
   }, [fetchMovieData]);
@@ -140,16 +135,18 @@ const Dashbaord: FC = () => {
   const handleOnSelectMovie = async (movieID: number) => {
     setDetailLoading(true);
     try {
+      setShowDetail(true);
       const data: MovieDetail = await MovieService.getDetails(movieID);
 
       if (data) {
         setMovieDetail(data);
-        setShowDetail(true);
       } else {
+        setShowDetail(false);
         setShowError(true);
         setError("Retrieve movie detail failed. Please try again.");
       }
     } catch (error) {
+      setShowDetail(false);
       setShowError(true);
       setError("Network issue. Please reload the page and try again.");
     }
@@ -161,21 +158,21 @@ const Dashbaord: FC = () => {
       <Tabs
         items={[
           {
-            active: category === CATEGORY.NOW_SHOWING,
+            active: category === MOVIE_STATUS.NOW_SHOWING,
             title: "Now Showing",
             onClick() {
               fetchMovieData({
-                selectedCategory: CATEGORY.NOW_SHOWING,
+                selectedCategory: MOVIE_STATUS.NOW_SHOWING,
                 pageNumber: 1,
               });
             },
           },
           {
-            active: category === CATEGORY.TOP_RATED,
+            active: category === MOVIE_STATUS.TOP_RATED,
             title: "Top Rated",
             onClick() {
               fetchMovieData({
-                selectedCategory: CATEGORY.TOP_RATED,
+                selectedCategory: MOVIE_STATUS.TOP_RATED,
                 pageNumber: 1,
               });
             },
@@ -215,6 +212,45 @@ const Dashbaord: FC = () => {
     [currentPage, handlePageChange, itemsPerPage, totalPages, totalResults]
   );
 
+  const movieList = useMemo(
+    () =>
+      movies.map((movie) => (
+        <div
+          key={movie.id}
+          className="card"
+          onClick={() => {
+            handleOnSelectMovie(movie.id);
+          }}
+        >
+          <div className="hover-text">
+            <Button type={"default"}>Movie Info</Button>
+          </div>
+
+          <div className="left-column">
+            <div
+              className="image-container"
+              style={{ width: isMobile ? "100%" : "150px" }}
+            >
+              <img
+                src={`${IMAGE_PATH_ORIGINAL}${movie.poster_path}`}
+                alt={movie.title}
+                loading="lazy"
+              />
+            </div>
+          </div>
+          <div className="right-column">
+            <div className="card-title">{movie.title}</div>
+            <div className="card-description">{movie.overview}</div>
+            <div className="card-extra-information">
+              <p>Language: {movie.original_language}</p>
+              <p>Release Date: {movie.release_date}</p>
+            </div>
+          </div>
+        </div>
+      )),
+    [isMobile, movies]
+  );
+
   useEffect(() => {
     fetchMovieData({});
   }, []);
@@ -222,84 +258,33 @@ const Dashbaord: FC = () => {
   return (
     <div>
       <div className="header">
-        <h1 className="title">Jom Movie!</h1>
+        <h1 className="title">Movies</h1>
       </div>
-
       {tabsComponent}
       {searchBar}
 
-      {loading ? (
-        <Spinner />
-      ) : (
-        <>
-          <div style={{ padding: "10px", margin: "10px 10%" }}>
+      <div style={{ padding: "10px", margin: "10px 10%" }}>
+        {loading ? (
+          <Skeleton />
+        ) : (
+          <>
             {movies && movies.length > 0 ? (
               <>
                 {pagination}
-                {movies.map((movie) => (
-                  <div
-                    key={movie.id}
-                    className="card"
-                    onClick={() => {
-                      handleOnSelectMovie(movie.id);
-                    }}
-                  >
-                    <div className="hover-text">
-                      <Button type={"default"}>Movie Info</Button>
-                    </div>
-
-                    <div className="left-column">
-                      <div
-                        className="image-container"
-                        style={{ width: isMobile ? "100%" : "150px" }}
-                      >
-                        <img
-                          src={`${IMAGE_PATH_ORIGINAL}${movie.poster_path}`}
-                          alt={movie.title}
-                          loading="lazy"
-                        />
-                      </div>
-                    </div>
-                    <div className="right-column">
-                      <div
-                        style={{
-                          fontSize: "30px",
-                          fontWeight: "600",
-                          textShadow: "2px 2px 4px rgba(0, 0, 0, 0.3)",
-                          letterSpacing: "2px",
-                          transition: "transform 0.3s ease",
-                        }}
-                      >
-                        {movie.title}
-                      </div>
-                      <div
-                        style={{
-                          padding: "1rem 0",
-                          fontSize: "16px",
-                          fontWeight: "400",
-                        }}
-                      >
-                        Description: {movie.overview}
-                      </div>
-                      <div style={{ fontSize: "16px", fontWeight: "600" }}>
-                        <p>Language: {movie.original_language}</p>
-                        <p>Release Date: {movie.release_date}</p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
+                {movieList}
                 {pagination}
               </>
             ) : (
               <div className="no-data-shown">
-                No Data Shown
+                No Movie Shown
                 {movieTitleSearch.current !== "" &&
                   ` with "${movieTitleSearch.current}"`}
               </div>
             )}
-          </div>
-        </>
-      )}
+          </>
+        )}
+      </div>
+
       <MovieDetailModal
         loading={detailLoading}
         movieDetail={movieDetail}

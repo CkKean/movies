@@ -1,0 +1,4 @@
+export const MOVIE_STATUS = {
+  NOW_SHOWING: "NOW_SHOWING",
+  TOP_RATED: "TOP_RATED",
+};

@@ -1,56 +1,75 @@
 # Project - *Movies*
 
-**Movies** is a movies app using the [The Movie Database API](https://developers.themoviedb.org/3).
+**Movies** is a movies app using the [The Movie Database API](https://developers.themoviedb.org/3). This is the codebase for an interview test assignment.
 
-- Total time: 72 hours (please no more!)
+You can preview the app via [Movies](https://ckkean.github.io/movies/)
 
-## User Stories
+## Table of Contents
+
+- [Tasks Completed](#tasks-completed)
+- [Installation](#installation)
+- [Usage](#usage)
+- [License](#license)
+
+## Tasks Completed
 
 The following **required** functionality is completed:
-
-- [✔] User can view a list of movies currently playing in theaters. Poster images load asynchronously.
-- [✔] Add a tab bar for **Now Playing** and **Top Rated** movies.
-- [✔] Add a search bar.
-- [✔] User can view movie details by tapping on a cell.
-- [✔] User sees loading state while waiting for the API.
-- [✔] User sees an error message when there is a network error.
-- [✔] Simple responsive.
+- [x] User can view a list of movies currently playing in theaters. Poster images load asynchronously.
+- [x] Add a tab bar for **Now Playing** and **Top Rated** movies.
+- [x] Add a search bar.
+- [x] User can view movie details by tapping on a cell.
+- [x] User sees loading state while waiting for the API.
+- [x] User sees an error message when there is a network error.
+- [x] Simple responsive.
 
 The following **optional** features are implemented:
 
 - [ ] Implement segmented control to switch between list view and grid view.
 - [ ] All images fade in.
 - [ ] Implement lazy load image.
-- [✔] Customize the highlight and selection effect of the cell.
-- [ ] Improve UX loading by skeleton loading.
+- [x] Customize the highlight and selection effect of the cell.
+- [x] Improve UX loading by skeleton loading.
 - [ ] Enhance responsive.
 
 The following **additional** features are implemented:
 
-- [ ] List anything else that you can get done to improve the app functionality!
-- [✔] Simple pagination.
-## Requirements
+- [x] Simple pagination.
 
-- Please use ReactJS with typescript
-- Please use SCSS
-- Please do not use any CSS/SCSS framework or UI library
+## Installation
+
+1. Clone the repository:
+   ```
+   git clone https://github.com/CkKean/movie-web-application.git
+   ```
+2. Navigate to the project directory:
+   ```
+   cd project-directory
+   ```
+3. **Open** the project in your preferred **IDE** or **code editor** (e.g., Visual Studio Code) or **prompt terminal**.
+
+4. Install dependencies:
+   ```
+   yarn install
+   ```
+
+## Usage
+
+1. Start the development server:
+   ```
+   yarn start
+   ```
+2. Open the project in your web browser by visiting `http://localhost:3000`.
+
 
 ## Video Walkthrough
 
 Here's a walkthrough of implemented user stories:
 
-> Please record screen to a GIF file and attach link here
-
-## Submit
-
-**When you're done, send us back a link to a repository with your source code, with a description of what you've done and any build instructions in the readme!**
-
-
-> You can use this file as the readme (please update what you've done, build instructions).
+![Demo](./public/demo.gif)
 
 ## License
 
-    Copyright [2016] [Chin Chee Kean]
+    Copyright [2023] [Chin Chee Kean]
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.

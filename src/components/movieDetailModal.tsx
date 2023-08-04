@@ -1,9 +1,9 @@
 import { FC } from "react";
+import { IMAGE_PATH_ORIGINAL } from "../constants/imageConfiguration";
 import { MovieDetail } from "../models/movieDetail";
 import Button from "./button";
+import Skeleton from "./skeleton";
 import Table from "./table";
-import { IMAGE_PATH_ORIGINAL } from "../constants/imageConfiguration";
-import Spinner from "./spinner";
 
 interface props {
   loading: boolean;
@@ -34,93 +34,101 @@ const MovieDetailModal: FC<props> = ({
 
   return (
     <div className="modal modal-backdrop">
-      <div className="modal-container modal-default">
+      <div
+        className={`modal-container modal-default ${
+          loading ? "modal-loading" : ""
+        }`}
+      >
         {loading ? (
-          <Spinner />
-        ) : movieDetail !== null && movieDetail !== undefined ? (
           <>
-            <div
-              className="modal-header"
-              style={{
-                backgroundImage: `url(${IMAGE_PATH_ORIGINAL}${movieDetail.backdrop_path})`,
-              }}
-            >
-              <div className="close-icon" onClick={onClose}></div>
+            <div className="modal-header" style={{ marginBottom: "1rem" }}>
+              <div
+                className="close-icon close-icon-loading"
+                onClick={onClose}
+              ></div>
             </div>
-
             <div className="modal-content">
-              <div
-                style={{
-                  fontSize: "2rem",
-                  textAlign: "center",
-                  fontWeight: "bold",
-                }}
-              >
-                {movieDetail.title}
-              </div>
-
-              <Table
-                items={[
-                  { title: "Overview", value: movieDetail?.overview },
-                  { title: "Tagline", value: movieDetail?.tagline || "-" },
-                  {
-                    title: "Duration",
-                    value: convertMinToReadableTime(movieDetail?.runtime),
-                  },
-                  {
-                    title: "Movie Type",
-                    value: movieDetail?.genres[0].name,
-                  },
-                  {
-                    title: "Original Language",
-                    value: movieDetail?.original_language,
-                  },
-                  {
-                    title: "Spoken Language",
-                    value: movieDetail?.spoken_languages[0].english_name,
-                  },
-                  { title: "Status", value: movieDetail?.status },
-                  { title: "Release Date", value: movieDetail?.release_date },
-                  {
-                    title: "Above 18",
-                    value: movieDetail?.adult ? (
-                      <span className="success-color">✔</span>
-                    ) : (
-                      <span className="danger-color">✗</span>
-                    ),
-                  },
-                  { title: "Popularity", value: movieDetail?.popularity },
-                  { title: "Vote Average", value: movieDetail?.vote_average },
-                  { title: "Vote Count", value: movieDetail?.vote_count },
-                  {
-                    title: "Website ",
-                    value: movieDetail?.homepage ? (
-                      <a
-                        href={movieDetail?.homepage}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        {movieDetail?.homepage}
-                      </a>
-                    ) : (
-                      "-"
-                    ),
-                  },
-                ]}
-              />
-              <div
-                style={{
-                  display: "block",
-                  margin: "1rem 0",
-                  textAlign: "center",
-                }}
-              >
-                <Button onClick={onClose}>Close</Button>
-              </div>
+              <Skeleton />
             </div>
           </>
         ) : (
-          "Retrieve Movie Detail Failed"
+          movieDetail !== null &&
+          movieDetail !== undefined && (
+            <>
+              <div
+                className="modal-header"
+                style={{
+                  backgroundImage: `url(${IMAGE_PATH_ORIGINAL}${movieDetail.backdrop_path})`,
+                }}
+              >
+                <div className="close-icon" onClick={onClose}></div>
+              </div>
+
+              <div className="modal-content">
+                <div
+                  className="text-center "
+                  style={{
+                    fontSize: "2rem",
+                  }}
+                >
+                  <b>{movieDetail.title}</b>
+                </div>
+
+                <Table
+                  items={[
+                    { title: "Overview", value: movieDetail?.overview },
+                    { title: "Tagline", value: movieDetail?.tagline || "-" },
+                    {
+                      title: "Duration",
+                      value: convertMinToReadableTime(movieDetail?.runtime),
+                    },
+                    {
+                      title: "Movie Type",
+                      value: movieDetail?.genres[0].name,
+                    },
+                    {
+                      title: "Original Language",
+                      value: movieDetail?.original_language,
+                    },
+                    {
+                      title: "Spoken Language",
+                      value: movieDetail?.spoken_languages[0].english_name,
+                    },
+                    { title: "Status", value: movieDetail?.status },
+                    { title: "Release Date", value: movieDetail?.release_date },
+                    {
+                      title: "Above 18",
+                      value: movieDetail?.adult ? (
+                        <span className="success-color">✔</span>
+                      ) : (
+                        <span className="danger-color">✗</span>
+                      ),
+                    },
+                    { title: "Popularity", value: movieDetail?.popularity },
+                    { title: "Vote Average", value: movieDetail?.vote_average },
+                    { title: "Vote Count", value: movieDetail?.vote_count },
+                    {
+                      title: "Website ",
+                      value: movieDetail?.homepage ? (
+                        <a
+                          href={movieDetail?.homepage}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          {movieDetail?.homepage}
+                        </a>
+                      ) : (
+                        "-"
+                      ),
+                    },
+                  ]}
+                />
+                <div className="modal-button">
+                  <Button onClick={onClose}>Close</Button>
+                </div>
+              </div>
+            </>
+          )
         )}
       </div>
     </div>

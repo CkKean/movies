@@ -1,17 +1,17 @@
-// Theme Color as variable
-
-@import "./styles/theme";
-@import "./styles//_modal";
-@import "./styles//_spinner";
-@import "./styles//_button";
-@import "./styles//_input";
-@import "./styles//_card";
-@import "./styles//_tab";
-@import "./styles//_table";
-@import "./styles//_pagination";
-@import "./styles//_select";
-@import "./styles//_message";
-@import "./styles//_toTopButton";
+@import "./styles/_theme";
+@import "./styles/_general";
+@import "./styles/_modal";
+@import "./styles/_spinner";
+@import "./styles/_button";
+@import "./styles/_input";
+@import "./styles/_card";
+@import "./styles/_tab";
+@import "./styles/_table";
+@import "./styles/_pagination";
+@import "./styles/_select";
+@import "./styles/_message";
+@import "./styles/_toTopButton";
+@import "./styles/_skeleton";
 
 .image-container {
   height: 100%;
