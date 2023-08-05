@@ -39,7 +39,7 @@ The following **additional** features are implemented:
 
 1. Clone the repository:
    ```
-   git clone https://github.com/CkKean/movie-web-application.git
+   git clone https://github.com/CkKean/movies.git
    ```
 2. Navigate to the project directory:
    ```
@@ -59,7 +59,6 @@ The following **additional** features are implemented:
    yarn start
    ```
 2. Open the project in your web browser by visiting `http://localhost:3000`.
-
 
 ## Video Walkthrough
 
