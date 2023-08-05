@@ -55,14 +55,16 @@ const MovieDetailModal: FC<props> = ({
           movieDetail !== null &&
           movieDetail !== undefined && (
             <>
-              <div
-                className="modal-header"
-                style={{
-                  backgroundImage: `url(${IMAGE_PATH_ORIGINAL}${movieDetail.backdrop_path})`,
-                }}
-              >
-                <div className="close-icon" onClick={onClose}></div>
-              </div>
+              {movieDetail.backdrop_path && (
+                <div
+                  className="modal-header"
+                  style={{
+                    backgroundImage: `url(${IMAGE_PATH_ORIGINAL}${movieDetail.backdrop_path})`,
+                  }}
+                >
+                  <div className="close-icon" onClick={onClose}></div>
+                </div>
+              )}
 
               <div className="modal-content">
                 <div
